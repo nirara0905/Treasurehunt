@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お宝探し</title>
+    <link rel="icon" href="img/favicon.ico" type="image/png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <header>
+        <div id="titleContaier">
+            <div class="sweep"></div>
+            <img class="mainlogo" src="img/logomain.png" alt="">
+            <div class="openingTextContainer">
+                <p class="openingText">P U S H</p>
+            </div>
+            <img class="tapicon" src="img/tapicon.png" alt="">
+            
+            <div class="fires"><span></span></div>
+        </div>
+    </header>
+    <div class="confetti">
+        <canvas></canvas>
+    </div>
+    <section id="gameover">
+        <img class="gameoverLogo" src="img/gameover.png" alt="">
+    </section>
+    <section id="gameclear">
+        <img class="gameclearLogo" src="img/gameclear.png" alt="">
+        
+        <div></div>
+    </section>
+    <section id="takara" class="">
+        <img class="takaranotizu" src="img/takaratizu.png" alt="">
+        <img class="takaranotizu key" src="img/takaratizu_key.png" alt="">
+        
+    </section>
+    <section>
+        <div id="questionConteainer">
+            <div class="wall close">
+                <p class="closeBtn close">×</p>
+            </div>
+            <div class="tipsBox">
+                <p class="tipsBtn">ヒント</p>
+                <p class="tipsText"></p>
+            </div>
+            <input class="answerInput" data-correct-num=""
+            type="text" name="answer" placeholder="">
+            <img class="submit" src="img/submit.png" alt="">
+        </div>
+    </section>
+    <main class="container">
+        <p class="timer">10:03</p>
+        <img class="mapicon" src="img/mapicon.png" alt="">
+        <div class="logoContainer">
+            <img class="logo" src="img/TreasureHunt.png" alt="">
+        </div>
+        <ul id="cardContainer">
+            
+        </ul>
+        <img class="keyIcon" src="img/key.png" alt="">
+    </main>
+
+    
+    <script type="text/javascript" src="js/confetti.js"></script>
+    <script type="text/javascript" src="js/data.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>

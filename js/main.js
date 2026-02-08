@@ -1,0 +1,417 @@
+'use strict';
+
+
+{
+const wall = document.querySelector('.wall');
+const submit = document.querySelector('.submit');
+const timer = document.querySelector('.timer');
+const answerInput = document.querySelector('.answerInput');
+const mainlogo = document.querySelector('.mainlogo');
+const ul = document.getElementById("cardContainer");
+const titleContaier = document.querySelector("#titleContaier");
+const openingText = document.querySelector(".openingText");
+const tipsBox = document.querySelector(".tipsBox");//ヒント
+const tipsText = document.querySelector(".tipsText");
+const fires = document.querySelector(".fires");
+
+createCard();
+const cards = document.querySelectorAll(".card")
+
+let state = "game"//[,"opening","game","gameover","clear"];
+let openingTextsCount = 0;
+let openingSoundFlag = true;
+let gameStartFlag = true;
+let mistakNum = 0;
+let answeredNum = [];
+let timerIntervalID = null;
+
+//全体をクリック
+document.addEventListener("click", (e) => {
+    if (state == "opening") {
+        if (openingSoundFlag){
+            openingSoundStart();
+            createFires();
+        }
+
+        if (openingTextsCount < openingTexts.length){
+            openingTextChange(openingTextsCount);
+            
+        }else {
+            state = "game";
+            mainLogoFadeIn();  
+                     
+        }
+        
+    } else if (state == "game") {
+
+        if (gameStartFlag){
+            gameStart();
+            timerIntervalID = setInterval(countDown,1000);
+        }
+        
+        if(e.target.classList.contains("card")){
+            //カードが押された処理
+            pushCard(e.target);
+            gameClear();
+            
+
+
+        } else if (e.target.classList.contains("submit")){
+            // サブミットが押された処理
+            let corsArr = corrects[Number(answerInput.dataset.correctNum)- 1];
+            
+            // 小文字を大文字に
+            const ans = answerInput.value.toUpperCase();
+
+            if (corsArr.includes(ans)){
+                // 正解のアクション
+                // カード回転・サウンド再生・文字出力
+                correctAction();
+
+            } else {
+                // 間違いサウンド再生・揺れ・
+                incorrectAction();
+            }
+            //全12カード正解時宝箱出現
+            
+            //鍵を探す問題を出現
+
+            //全問正解の演出
+
+        } else if (e.target.classList.contains("tipsBtn")){
+            //ヒントのボタンが押された時
+            tipsTextOpen();
+        } else if (e.target.classList.contains("keyIcon")){
+            //閉じるが押された時
+            FadeInOutTakara();
+        } else if (e.target.classList.contains("close")){
+            //閉じるが押された時
+            answersClose();
+        }
+
+    } else if (state == "gameover") {
+
+    } else if (state == "wait") {
+
+    }  
+    console.log(state);
+}, { passive: true });
+
+window.addEventListener("load", () => {
+    localStorage.setItem('key', 'value1');
+});
+
+
+//ゲームをクリアした際 1回きりの関数
+function gameClear(){
+    // 紙吹雪
+    loop();
+
+    const gameclearLogo = document.querySelector(".gameclearLogo");
+    gameclearLogo.classList.add("action");
+
+    //タイマーをストップ
+    clearInterval(timerIntervalID);
+
+    const confetti = document.querySelector(".confetti");
+    confetti.classList.add("action");
+
+    const gameclearSound = new Audio('sound/gameclear.mp3');
+    gameclearSound.volume = 0.4;
+    setTimeout(()=> {gameclearSound.play();},1000);
+    setTimeout(()=> {
+        gameclearLogo.classList.remove("action");
+    },8000);//8秒
+
+    // 黒い画面が登場で骸骨が喋る
+    // 宝の地図と左下の再度見るのアイコンを常時表示
+    FadeInOutTakara();
+    const keyIcon = document.querySelector(".keyIcon");
+    keyIcon.classList.add("action");
+}
+
+function FadeInOutTakara(){
+    // 宝の地図と左下の再度見るのアイコンを常時表示
+    const takara = document.querySelector("#takara");
+    takara.classList.add("action");
+    setTimeout(()=> {
+        takara.classList.remove("action");
+    },5000);//8秒
+}
+
+//時間切れ
+function gameoverOpen(){
+    const gameoverSound = new Audio('sound/gameover.mp3');
+    gameoverSound.volume = 0.5;
+    gameoverSound.play();
+    const gameover = document.getElementById("gameover");
+    gameover.classList.add("action");
+    state = "gameover";
+}
+
+
+//ヒントのボタンが押された時
+function tipsTextOpen(){
+    const num = Number(answerInput.dataset.correctNum)-1 ;
+    tipsText.innerHTML = "";
+    textFadeIn(tipsTexts[num],0,tipsText);
+    doubleTapDrop(state,1000);
+}
+
+//カードが押された処理
+function pushCard(target){
+    removeAnserClass();
+    answerInput.value = "";
+    if(!target.classList.contains("rotate")){
+        cardClickSound();
+        sleep(300).then(() => {
+            answersOpen(target.dataset.cardNum,personName[Number(target.dataset.person)]);
+        });
+        target.classList.add("answer");
+    } 
+}
+
+// ダブルタップを防ぐため
+function doubleTapDrop(nowState,time){
+    if(state != "wait"){
+        state = 'wait'
+        sleep(time).then(() => {
+            state = nowState;
+        });
+    }
+}
+
+// オープニングテキストを変更していく
+function openingTextChange(count){
+    openingText.innerHTML = "";
+    textFadeIn(openingTexts[count],100,openingText);
+    let waitTime = 100 * (openingTexts[count].length + 10);
+    openingTextsCount++;
+    doubleTapDrop(state,waitTime);
+}
+
+function gameStart(){
+    titleContaier.classList.add("start");
+    gameStartFlag = false;
+    document.querySelector('#titleContaier').remove(); 
+}
+
+//オープニングのフェードイン
+function mainLogoFadeIn(){
+    mainlogo.classList.add("action");
+    document.querySelector('.sweep').classList.add("action");
+    document.querySelector('.tapicon').classList.add("start");
+    document.querySelector('.tapicon').src = "img/start.png";
+    openingText.innerHTML = "";
+    doubleTapDrop(state,3000);
+}
+
+//制限時間カウントダウン
+function countDown(){
+    let [hour ,minutes] = timer.textContent.split(':').map(n => Number(n));
+    minutes--;
+    minutes = (minutes < 0) ? 59 : minutes;
+    if (minutes == 59){
+        hour--;
+    }
+    if (hour < 0){
+        [hour, minutes]= [0,0];
+        
+        clearInterval(timerIntervalID);
+        setTimeout(() => {
+            gameoverOpen();
+        }, 1000);
+    } else if (hour < 5){
+        timer.style.color = "rgb(170, 0, 0)";
+    }
+    timer.textContent = String(hour).padStart(2, '0')+":"+String(minutes).padStart(2, '0');
+    
+    if (hour > 1 && hour % 5 == 0 && minutes == 0){
+        timerSound();
+    }
+
+}
+
+//5分毎に時計の音をフェードアウトしながらならす
+function timerSound(){
+    const timerSound = new Audio('sound/timer.mp3');
+    let volume = 0.6
+    timerSound.volume = volume;
+    timerSound.play();
+    let id = setInterval(() => {
+        timerSound.volume = volume;
+        volume = volume - 0.05;
+        if (volume < 0.1){
+            clearTimeout(id);
+        }
+    },1000);
+}
+
+//火の粉を作成する
+function createFires(){
+    
+    const firesRect = fires.getBoundingClientRect();
+    for (let i = 0 ;i < 20;i++){
+        const span = document.createElement("span");
+        const x = Math.round(Math.random()*firesRect.width);
+        const dilaySeconds = Math.round((Math.random()* 5)*10)/10;
+        const durationSeconds = 3 + (Math.round((Math.random()* 3)*10)/10);
+        const size = 2 + Math.random()* 3;
+        span.style.left = x+"px";
+        span.style.animationDelay = dilaySeconds+"s";
+        span.style.animationDuration = durationSeconds+"s";
+        span.style.height = size+"px";
+        span.style.width = size+"px";
+        fires.appendChild(span);
+    }
+    console.log(fires);
+}
+
+//答えが正解の時の関数
+//カード回転・サウンド再生・文字出力
+function correctAction(){
+    const card = document.querySelector(".card.answer");
+    const correctNum = Number(answerInput.dataset.correctNum);
+    card.classList.add("rotate");
+    setTimeout(() => {
+        card.src =  "img/card_u.png";
+    }, 300);
+    // サウンド再生
+    const correctSound = new Audio('sound/correct.mp3');
+    correctSound.volume = 0.5;
+    correctSound.play();
+
+    // 隠し場所の出現文字変更(中)
+    const cardMainText = card.parentNode.querySelector(".cardMainText");
+    cardMainText.innerHTML = "";
+    textFadeIn(hideSpaces[correctNum-1],1000,cardMainText);
+
+    // 入力した答えの反映(下)
+    const correct = card.parentNode.querySelector(".correct");
+    correct.textContent = corrects[correctNum-1][0];
+
+    // 答えたカードの裏面の子要素に答え済みのクラスを付与
+    const children = Array.from(card.parentNode.children);
+    for(const child of children){
+        child.classList.add("answered");
+    }
+    
+    answersClose();
+
+    // 連打防止
+    doubleTapDrop(state,2000);
+    // ミスの回数を0に
+    mistakNum = 0;
+
+    answeredNum.push(correctNum);
+};
+
+//テキストを1文字ずつ出現させる
+function textFadeIn(inText,dilayTime,changeNode){
+    for(let j = 0;j < inText.length;j++){
+        let time = 100 * (j+1);
+        setTimeout(() => {
+            let word = inText[j];
+            word = (word == "$") ? "<br>": word;
+            changeNode.innerHTML += word;
+        }, time+dilayTime);
+    }
+}
+
+//答えを間違った時の関数
+function incorrectAction(){
+    const incorrectSound = new Audio('sound/Incorrect.mp3');
+    incorrectSound.volume = 0.5;
+    incorrectSound.play();
+    answerInput.classList.add("incorrect");
+    sleep(300).then(() => {
+        answerInput.classList.remove("incorrect");
+    });
+    answerInput.value = "";
+    answerInput.focus();
+    doubleTapDrop(state,1000);
+    mistakNum++;
+    if (mistakNum > 1){
+        tipsBox.classList.add("answer");
+    }
+}
+
+//最初のオープニングの音楽
+function openingSoundStart(){
+    const openingsound = new Audio('sound/openingsound.mp3');
+    openingsound.volume = 0.1;
+    // openingsound.loop = true;
+    openingsound.play();
+    openingSoundFlag = false;
+
+}
+
+//答える欄を消す
+function answersClose(){
+    wall.classList.remove("answer");
+    answerInput.classList.remove("answer");
+    submit.classList.remove("answer");
+    tipsBox.classList.remove("answer");
+    removeAnserClass();
+    tipsText.innerHTML = "";
+}
+
+//答える欄を出力
+function answersOpen(correctNum,personName){
+    wall.classList.add("answer");
+    answerInput.classList.add("answer");
+    answerInput.focus();
+    submit.classList.add("answer");
+    answerInput.classList.remove("incorrect");
+    answerInput.dataset.correctNum = correctNum;
+    answerInput.placeholder = personName + "が答えよ";
+}
+
+function cardClickSound(){
+    const incorrectSound = new Audio('sound/cardClick.mp3');
+    incorrectSound.volume = 0.5;
+    incorrectSound.play();
+}
+
+//カードの赤い標準を消す
+function removeAnserClass(){
+    cards.forEach(card => {
+        card.classList.remove("answer");
+    });
+}
+
+//スリープ関数
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+//12枚のカードを作成
+function createCard(){
+    for(let i = 0;i < 12;i++){
+        const li = document.createElement("li");
+        const img = document.createElement("img");
+        const p1 = document.createElement("p");
+        const p2 = document.createElement("p");
+        const p3 = document.createElement("p");
+        p1.className = "cardMainText";
+        p1.innerHTML = i+1;
+        p2.className = "cardNum"; 
+        p2.textContent = i+1;
+        p3.className = "correct"; 
+        p3.textContent = "";
+
+        img.className = "card";
+        img.src = "img/card_o.png";
+        img.dataset.cardNum = i+1;
+        img.dataset.person = persons[i];
+        li.className = "cardItem";
+        li.appendChild(img);
+        li.appendChild(p1);
+        li.appendChild(p2);
+        li.appendChild(p3);
+        ul.appendChild(li);
+    }
+}
+
+
+}

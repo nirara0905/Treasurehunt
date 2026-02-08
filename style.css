@@ -1,0 +1,562 @@
+@charset "UTF-8";
+
+/* -----------------------
+          default
+------------------------ */
+
+html, body{
+  height: 100%;
+  margin: 0;
+  /*overflow: hidden;         bodyのスクロールを止める */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+ul {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+body {
+  font-family: '游明朝','Yu Mincho',"Times New Roman", "Hiragino Mincho Pro", serif; 
+
+}
+
+/* -----------------------
+     紙吹雪キャンバス
+------------------------ */
+
+.confetti canvas {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  inset:  0 0 0 0 ;
+  z-index: 20;
+}
+
+
+
+/* -----------------------
+           common
+------------------------ */
+
+
+#titleContaier {
+  display: flex;
+  position: fixed;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background-image: url(./img/titlebg.jpg);
+  background-repeat:no-repeat;
+  background-size: 100% 100%; 
+  z-index: 10;
+}
+
+#titleContaier.start {
+  display: none;
+}
+
+.mainlogo {
+  height: 0px;
+  max-width: 80vw;
+  max-height: min(180px,40vh);
+}
+
+.mainlogo.action{
+  height: 40vh;
+  transform: scale(1.2);
+  animation: logoIn 3000ms ease-out forwards;
+}
+
+.sweep {
+  position: absolute;
+  inset: -30%;
+  background: linear-gradient(110deg,
+    transparent 0%,
+    rgba(255,255,255,0.0) 35%,
+    rgba(255,255,255,0.35) 48%,
+    rgba(255,255,255,0.0) 60%,
+    transparent 100%);
+  mix-blend-mode: screen;
+  transform: translateX(-35%) rotate(0deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sweep.action {
+  animation: sweep 1600ms ease-out 400ms forwards;
+}
+
+.openingTextContainer {
+  max-height: 40vh;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.openingText {
+  color: whitesmoke;
+  font-size: 2rem;
+  transform: scale(0.9,1);
+  margin: 20px 0px;
+  animation: fade-in-text .8s ease-out ;
+}
+
+
+.fires {
+  display: block;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 10;
+}
+.fires > span  {
+  position: absolute;
+  bottom: -10px;
+  height: 3px;
+  width: 3px;
+  border-radius: 50%;
+  background-color: #9b1b1b;
+  filter: blur(1px);
+  box-shadow:0px 0px 10px #d2e80c ;
+  animation: fall ease-in infinite;
+}
+
+@keyframes fall {
+  80% {opacity: 0;}
+  to {
+    transform:  translateY(-120vh);
+  }
+}
+
+.tapicon {
+  height: 60px;
+  animation: Turnlights .8s ease-out infinite;
+}
+
+.tapicon.start {
+  height: 80px;
+  animation: Turnlights 2s ease-out infinite ,fade-in-under 2s ;
+}
+
+.container {
+  display: block;
+  position: relative;
+  background-image: url(./img/bg.jpg);
+  background-repeat:no-repeat;
+  background-size: 100% 100%; 
+  height: 100vh; 
+  width: 100vw;
+}
+
+.logoContainer {
+  width: 100vw;
+}
+
+.logo{
+  display: block;
+  height: 18vh;
+  margin: 0 auto;
+  filter: drop-shadow(0px 10px 10px #39231563) ;
+}
+
+#cardContainer{
+  /* position: absolute; */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin:0 8vw;
+  gap:1.2vw;
+}
+
+.cardItem {
+  position: relative;
+  max-height: 25vh;
+}
+
+.cardItem .card{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- card -------- */
+
+.card {
+  max-height: 25vh;
+  margin: 0 auto;
+  filter: drop-shadow(0px 5px 10px #7c3321a5) ;
+  transition: scale 0.4s;
+}
+
+.card:active {
+  transform: scale(1.05);
+  transition: transform 0.5s , scale 0.4s;
+}
+
+.card.rotate {
+  transform: rotateY(180deg);
+  transition: transform 0.8s, scale 0.4s;
+}
+.card.answer {
+  scale: 1.05;
+  transition: transform 0.8s;
+  filter: drop-shadow(0px 5px 20px #f31045) ;
+}
+
+
+
+.cardMainText {
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  height: auto;
+  width: 90%;
+  color: rgba(210, 198, 198, 0.838);
+  font-size: clamp(10px, 4cqw, 40px);
+  transform: translate(-50% , -50%);
+  pointer-events: none;
+}
+.cardNum,
+.correct {
+  font-size: 0.8rem;
+  opacity: 0.1;
+  color: rgb(43, 33, 17);
+  position: absolute;
+  pointer-events: none;
+}
+.cardNum {
+  top: 5%;
+  right: 5%;
+}
+.correct {
+  bottom: 5%;
+  left: 5%;
+}
+
+.cardMainText.answered {
+  color: rgb(125 28 47);
+  font-size: clamp(8px, 2cqw, 16px);
+}
+.cardNum.answered,
+.correct.answered {
+  opacity: 1;
+  transition: opacity 1s 1s;
+}
+ 
+
+#gameover {
+  opacity: 0;
+  position: fixed;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.663);
+  pointer-events: none;
+}
+
+
+.gameoverLogo {
+  width: 100%;
+  height: 100%;
+}
+
+#gameover.action {
+  opacity: 1;
+  transition: opacity 2s;
+  pointer-events: auto;
+}
+
+.gameclearLogo {
+  opacity: 0;
+  width:  40vw;
+  position: fixed;
+  left: 30vw;
+  bottom: -100px;
+  z-index: 20;
+  transition: bottom 3s , opacity 1s, width 2s, left 2s;
+}
+
+.gameclearLogo.action {
+  opacity: 1;
+  bottom: min(20px,5vh);
+  width:  60vw;
+  left: 20vw;
+  transition: bottom 1s , opacity 2s, width 2s, left 2s;
+  animation: puyon 3s 2s ease-out infinite;
+}
+
+#takara {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  z-index: 20;
+  pointer-events: none;
+}
+#takara.action {
+  background-color: rgba(0, 0, 0, 0.362);
+}
+
+.takaranotizu {
+  opacity: 0;
+  position: absolute;
+  width: 70%;
+  max-height: 80%;
+  left: 15%;
+  top: 15vh;
+  height: auto;
+  pointer-events: none;
+  transition: opacity 1s;
+}
+
+#takara.action > .takaranotizu.key {
+  animation: Turnlights .8s ease-out infinite 1s;
+}
+
+#takara.action > .takaranotizu{
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+.keyIcon {
+  position: fixed;
+  width: 10vh;
+  bottom: 5vh;
+  left: 5vh;
+  opacity: 0;
+  transition: opacity 1s;
+  z-index: 10;
+}
+
+.keyIcon.action{
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+
+.mapicon {
+  display: inline;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  opacity: 0.5;
+}
+
+#questionConteainer {
+  display: block;
+}
+
+.container > .timer {
+  font-size: clamp(16px, 6vw, 3rem);
+  position: absolute;
+  top: 20px;
+  right: 10vw;
+}
+
+.answerInput {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50vw;
+  font-size: 1.5em;
+  padding: 15px;
+  z-index: 5;
+  border-radius: 20px;
+}
+
+/* ヒント */
+.tipsBox {
+  position: fixed;
+  display: flex;
+  top: 36%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50vw;
+  font-size: 1em;
+  z-index: 5;
+}
+.tipsBox {
+  flex: 1 auto;
+}
+
+.tipsBtn {
+  background-color: #dba971;
+  padding: 5px 10px;
+  border-radius: 10px;
+  min-width: 60px;
+  text-align: center;
+}
+.tipsText {
+  color: white;
+  padding: 5px;
+}
+
+.submit {
+  position: fixed;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  width: 40vw;
+  z-index: 5;
+}
+
+.submit:active {
+  transform:  translate(-50%, 5%);
+  transition: transform 0.1s;
+}
+
+
+/* ---------- 答えるやつ -------- */
+input::placeholder {
+    color: #904747;
+}
+
+
+.wall {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.362);
+  z-index: 4;
+}
+
+.closeBtn {
+  position: absolute;
+  font-size: 3rem;
+  right: 30px;
+  bottom: 20px ;
+  color: white;
+}
+
+.wall,
+.answerInput,
+.submit,
+.tipsBox{
+  opacity: 0;
+  pointer-events: none;
+  animation: fade-out .4s;
+}
+
+.wall.answer,
+.answerInput.answer,
+.submit.answer,
+.tipsBox.answer {
+  opacity: 1;
+  animation: fade-in .4s forwards;
+  pointer-events: auto;
+}
+
+.answerInput.incorrect {
+  animation: incorrect .1s;
+}
+
+
+input::placeholder {
+    color: #904747;
+}
+
+.confetti canvas {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.confetti.action canvas {
+  opacity: 0;
+  transition: opacity 5s;
+  transition-delay: 10s;
+}
+
+@keyframes fade-in {
+    0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+@keyframes fade-in-under {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) ;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px) ;
+  }
+}
+
+@keyframes fade-in-text {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9,1) ;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scale(0.9,1);
+  }
+}
+
+@keyframes fade-out {
+    0% {opacity: 1;}
+  100% {opacity: 0;}
+}
+@keyframes Turnlights {
+    0% {opacity: 1;}
+   50% {opacity: 0.2;}
+  100% {opacity: 1;}
+}
+
+@keyframes incorrect {
+    0% {transform: translate(-50%, -50%);}
+   25% {transform: translate(-55%, -50%);}
+   50% {transform: translate(-50%, -50%);}
+   75% {transform: translate(-45%, -50%);}
+  100% {transform: translate(-50%, -50%);}
+}
+
+@keyframes logoIn {
+  0%   { opacity: 0; filter: blur(10px); transform: scale(1.2); }
+  65%  { opacity: 1; filter: blur(0px);  transform: scale(1.0);  }
+  100% { opacity: 1; filter: blur(0px);  transform: scale(1.0);  }
+}
+
+@keyframes sweep {
+  0%   { opacity: 0; transform: translateX(-45%); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(45%); }
+}
+
+
+@keyframes puyon {
+  0%   { transform: scale(1.0, 1.0) translate(0%, 0%); }
+  15%  { transform: scale(0.95, 1.1) translate(0%, -5%); }
+  20%  { transform: scale(1.05, 0.9) translate(0%, 5%); }
+  25%  { transform: scale(0.95, 1.05) translate(0%, -3%); }
+  30%  { transform: scale(1.05, 0.95) translate(0%, 3%); }
+  35%  { transform: scale(1.0, 1.0) translate(0%, 0%); }
+  40% { transform: scale(1.0, 1.0) translate(0%, 0%); }
+  100% { transform: scale(1.0, 1.0) translate(0%, 0%); }
+}
