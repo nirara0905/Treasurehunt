@@ -471,6 +471,7 @@ function SoundFadeOut(Sound){
         if (volume < 0.0){
             clearTimeout(id);
             BGMSound.pause();
+            BGMSound.volume = 0.2;
         }
         console.log("123",BGMSound.volume);
     },500);
