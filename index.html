@@ -5,10 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>お宝探し</title>
     <link rel="icon" href="img/favicon.ico" type="image/png">
+    
+    <link rel="stylesheet" href="loader.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+    <div id="loading">
+        <div class="loader"></div>
+    </div>
+    <div id="rotateNotice">
+        <div class="rotateBox">
+            <div class="phone"></div>
+            <p>横向きにして遊んでね</p>
+        </div>
+    </div>
     <header>
         <div id="titleContaier">
             <div class="sweep"></div>
@@ -30,7 +40,17 @@
     <section id="gameclear">
         <img class="gameclearLogo" src="img/gameclear.png" alt="">
         
-        <div></div>
+        <div id="skullConteainer">
+            <div class="skullbox">
+                <img class="skull skbtm" src="img/gaikotu_b.png" alt="">
+                <img class="skull skup" src="img/gaikotu_t.png" alt="">
+                <p class="clearText" >よくぞ、ここまで辿り着いた。</p>
+                <img class="tapicon" src="img/tapicon.png" alt="">
+
+            </div>
+            <img class="skullbg" src="img/skullbg.png" alt="">
+            <div class="clearFires"><span></span></div>
+        </div>
     </section>
     <section id="takara" class="">
         <img class="takaranotizu" src="img/takaratizu.png" alt="">
@@ -52,7 +72,7 @@
         </div>
     </section>
     <main class="container">
-        <p class="timer">10:03</p>
+        <p class="timer">30:00</p>
         <img class="mapicon" src="img/mapicon.png" alt="">
         <div class="logoContainer">
             <img class="logo" src="img/TreasureHunt.png" alt="">
